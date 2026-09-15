@@ -1,0 +1,155 @@
+# AI Usage Disclosure
+
+## 1. AI tools used
+
+I used ChatGPT to assist with understanding the assignment, generating the initial Django project, discussing implementation choices, debugging and preparing documentation and tests.
+
+## 2. Prompts I gave
+
+My requests included the following, summarized rather than quoted verbatim:
+
+
+## Prompt 1 — understanding the Requirements 
+
+I am building a Django-based box recommendation system for an ecommerce
+warehouse as a hiring assignment.
+
+Products have dimensions and weight. Boxes have internal dimensions,
+maximum weight capacity, and cost. An order can contain multiple products
+with quantities.
+
+Explain the requirements in simple language using one worked example.
+Identify missing requirements and decisions I need to make.
+Do not generate code yet.
+
+## Prompt 2 —  clear the design decisions
+
+For my initial implementation, I propose these assumptions:
+
+- Dimensions are in centimetres and weights are in kilograms.
+- Each order must fit into a single box.
+- Products are rigid rectangular items.
+- Products may rotate into any of the six axis-aligned orientations.
+- The recommendation should choose the cheapest suitable box.
+- If costs are equal, prefer the smaller box volume, then a stable box ID.
+- If no suitable box is found, return a clear result.
+
+
+Review these assumptions. Explain their trade-offs and identify any
+important ambiguity, especially around packaging space and box weight.
+Do not silently add new requirements.
+
+## Prompt 3 — Database design
+
+Help me design Django models for Product, Box, Order, and OrderItem.
+
+An OrderItem should connect an order to a product and store quantity.
+Recommend suitable field types for dimensions, weights, and monetary values.
+Explain relationships, positive-value validation, and database constraints.
+
+Also explain whether order items should preserve product dimensions and
+weight if product data changes later. Separate essential assignment
+features from optional production improvements.
+
+## Prompt 4 — Understanding the packing algorithm
+
+Explain why checking only total weight, total volume, and individual
+product fit is insufficient to prove that all products fit together.
+
+Compare a simple stacking approach with a basic 3D packing heuristic.
+Recommend a manageable approach for a small Django hiring assignment.
+
+Explain allowed rotations, quantity handling, overlap prevention,
+boundary checks, and limitations. Distinguish between proving that a
+packing fits and failing to find a packing. Provide pseudocode first.
+
+Using the packing approach and assumptions we agreed on, help me implement
+a box recommendation service separately from Django views.
+
+It should:
+1. Expand order quantities into individual items.
+2. Calculate total product weight and volume.
+3. Reject boxes that fail necessary weight or volume checks.
+4. Evaluate actual placement using the agreed packing approach.
+5. Select the cheapest box for which a valid packing is found.
+6. Apply deterministic tie-breaking.
+7. Return a clear explanation and a no-suitable-box result when needed.
+
+Explain each function and its limitations. Keep the code small enough
+that I can understand, modify, and explain it in an interview.
+
+## Prompt 5 — Meaningful testing
+Help me design tests for the box recommendation system before generating
+test code.
+
+Cover:
+- A single product that fits.
+- Multiple products and repeated quantities.
+- A product that fits only after rotation.
+- Exact dimension and weight boundaries.
+- Weight capacity exceeded.
+- Enough total volume but no valid arrangement.
+- Selection of the cheapest feasible box.
+- Equal-cost tie-breaking.
+- Empty orders and invalid inputs.
+- No available boxes.
+
+For each test, explain the inputs and expected result.
+Where placement coordinates are returned, verify that items stay inside
+the box and do not overlap.
+
+## Prompt 6 — code review and debugging
+Review the code below against our agreed requirements.
+
+Identify correctness bugs, unsupported assumptions, validation gaps,
+unnecessary database queries, and places where the explanation overstates
+what the packing algorithm guarantees.
+
+For each issue, explain a reproducible example and a minimal fix.
+Do not rewrite the entire project.
+
+
+## Prompt 7 — Documentation aur honest AI disclosure
+
+Help me write a README covering setup, assumptions, data models,
+recommendation logic, one worked example, test commands and known limitations.
+
+Also help me prepare AI_USAGE.md containing only:
+- Tools used.
+- Prompts actually used.
+- Outputs I accepted or rejected and why.
+- Mistakes found.
+- Verification steps and actual results.
+
+Use the development notes I provide. Do not invent prompts, independent
+work, rejected suggestions, or successful test results. Ask for missing facts.
+
+
+
+## 3. Output I accepted
+
+I accepted the initial Django project structure, implementation code, test cases and documentation generated by ChatGPT as a starting point for the Box Selection System. These outputs helped establish the application structure and provided a basis for further implementation and verification.
+
+
+
+## 4. Output I rejected or modified
+
+I requested changes to the AI-generated documentation to focus on the required disclosure sections: tools, prompts, accepted outputs, rejected or modified outputs, mistakes, and verification. I also flagged the suggested Django dependency setup because installation failed in my local Python environment and requested help resolving the compatibility issue.
+
+
+
+## 5. Mistakes the AI made
+The initial setup did not sufficiently account for the compatibility of the Django requirement with my local Python environment. Installation failed for Django>=5.2,<5.3.
+
+
+## 6. How I verified the final code
+
+The following records my verification of the submitted version:
+
+* Ran python manage.py check to check Django configuration.
+* Ran python manage.py migrate to apply database migrations.
+* Ran python manage.py test and reviewed the results.
+* Started the application using python manage.py runserver and tested the order submission and recommendation flow.
+* Compared recommendations against manually calculated examples, checking product quantities, dimensions, total weight, box capacity, and cost.
+* Tested invalid inputs and orders for which no suitable box was available.
+
